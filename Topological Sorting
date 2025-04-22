@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_VERTICES 100
+
+int main() {
+    int numVertices;
+
+    printf("Enter the number of vertices: ");
+    scanf("%d", &numVertices);
+
+    if (numVertices <= 0 || numVertices > MAX_VERTICES) {
+        printf("Invalid number of vertices.\n");
+        return 1;
+    }
+
+    int adjMatrix[MAX_VERTICES][MAX_VERTICES];
+    int inDegree[MAX_VERTICES];
+    int topologicalOrder[MAX_VERTICES];
+    int queue[MAX_VERTICES];
+    int front = 0, rear = -1;
+    int count = 0;
+
+    for (int i = 0; i < numVertices; i++) {
+        inDegree[i] = 0;
+        for (int j = 0; j < numVertices; j++) {
+            adjMatrix[i][j] = 0;
+        }
+    }
+
+    printf("Enter the directed edges (format: source destination, -1 -1 to end):\n");
+    int u, v;
+    while (scanf("%d %d", &u, &v) == 2 && (u != -1 || v != -1)) {
+        if (u >= 0 && u < numVertices && v >= 0 && v < numVertices) {
+            adjMatrix[u][v] = 1;
+            inDegree[v]++;
+        } else {
+            printf("Invalid vertices: %d %d\n", u, v);
+        }
+    }
+
+    for (int i = 0; i < numVertices; i++) {
+        if (inDegree[i] == 0) {
+            queue[++rear] = i;
+        }
+    }
+
+    // Perform topological sort
+    while (front <= rear) {
+        int currentVertex = queue[front++];
+        topologicalOrder[count++] = currentVertex;
+
+        for (int neighbor = 0; neighbor < numVertices; neighbor++) {
+            if (adjMatrix[currentVertex][neighbor]) {
+                inDegree[neighbor]--;
+                if (inDegree[neighbor] == 0) {
+                    queue[++rear] = neighbor;
+                }
+            }
+        }
+    }
+
+    if (count != numVertices) {
+        printf("Graph contains a cycle, topological sort not possible.\n");
+    } else {
+        printf("Topological Ordering: ");
+        for (int i = 0; i < numVertices; i++) {
+            printf("%d ", topologicalOrder[i]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
