@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+double calculateRatio(int value, int weight) {
+    if (weight == 0) return 0.0;
+    return (double)value / weight;
+}
+void sortByRatio(int n, int values[], int weights[], double ratios[], int indices[]) {
+    for (int i = 0; i < n; i++) indices[i] = i;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (ratios[indices[j]] < ratios[indices[j + 1]]) {
+                int temp = indices[j];
+                indices[j] = indices[j + 1];
+                indices[j + 1] = temp;
+            }
+        }
+    }
+}
+int main() {
+    int n;
+    int capacity;
+    printf("Enter the number of items: ");
+    scanf("%d", &n);
+    int values[n];
+    int weights[n];
+    double ratios[n];
+    int sortedIndices[n];
+    double fractions[n];
+    printf("Enter the value and weight for each item:\n");
+    for (int i = 0; i < n; i++) {
+        printf("Item %d: Value Weight: ", i + 1);
+        scanf("%d %d", &values[i], &weights[i]);
+        ratios[i] = calculateRatio(values[i], weights[i]);
+        fractions[i] = 0.0;
+    }
+    printf("Enter the knapsack capacity: ");
+    scanf("%d", &capacity);
+    sortByRatio(n, values, weights, ratios, sortedIndices);
+    double totalValue = 0;
+    int currentWeight = 0;
+    printf("\nKnapsack contents:\n");
+    for (int i = 0; i < n; i++) {
+        int originalIndex = sortedIndices[i];
+        if (currentWeight + weights[originalIndex] <= capacity) {
+            currentWeight += weights[originalIndex];
+            totalValue += values[originalIndex];
+            fractions[originalIndex] = 1.0;
+            printf("Took 1.00 of Item %d (Value: %d, Weight: %d)\n",
+                   originalIndex + 1, values[originalIndex], weights[originalIndex]);
+        } else {
+            int remainingCapacity = capacity - currentWeight;
+            double fraction = (double)remainingCapacity / weights[originalIndex];
+            totalValue += values[originalIndex] * fraction;
+            currentWeight = capacity;
+            fractions[originalIndex] = fraction;
+            printf("Took %.2f of Item %d (Value: %d, Weight: %d)\n",
+                   fraction, originalIndex + 1, values[originalIndex], weights[originalIndex]);
+            break;
+        }
+    }
+    printf("\nTotal value in the knapsack: %.2f\n", totalValue);
+    return 0;
+}
