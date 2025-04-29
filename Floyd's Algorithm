@@ -14,7 +14,7 @@ void floydWarshall(int graph[V][V]) {
             }
         }
     }
-    printf("Floyd-Warshall Algorithm Result:\n");
+    printf("Floyd's Algorithm Result:\n");
     for (i = 0; i < V; i++) {
         for (j = 0; j < V; j++) {
             if (dist[i][j] == INF)
