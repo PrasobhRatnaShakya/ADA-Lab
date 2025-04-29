@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdbool.h>
+#define V 4
+void warshall(int graph[V][V], bool reach[V][V]){
+    int i, j, k;
+    for (i = 0; i < V; i++) {
+        for (j = 0; j < V; j++) {
+            reach[i][j] = (graph[i][j] != 0);
+            if (i == j) reach[i][j] = true;
+        }
+    }
+    for (k = 0; k < V; k++) {
+        for (i = 0; i < V; i++) {
+            for (j = 0; j < V; j++) {
+                reach[i][j] = reach[i][j] || (reach[i][k] && reach[k][j]);
+            }
+        }
+    }
+    printf("Warshall's Algorithm Result (Reachability Matrix):\n");
+    for (i = 0; i < V; i++) {
+        for (j = 0; j < V; j++) {
+            printf("%d ", reach[i][j]);
+        }
+        printf("\n");
+    }
+}
+int main() {
+    int graph[V][V] = {
+        {0, 1, 0, 0},
+        {0, 0, 1, 0},
+        {0, 0, 0, 1},
+        {0, 0, 0, 0}
+    };
+    bool reach[V][V];
+    warshall(graph, reach);
+    return 0;
+}
